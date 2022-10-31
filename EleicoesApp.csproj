@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>EleicoesBot</RootNamespace>
+		<LangVersion>preview</LangVersion>
+		<OutDir>bin\$(Configuration)\</OutDir>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DSharpPlus" Version="4.3.0-nightly-01180" />
+		<PackageReference Include="DSharpPlus.CommandsNext" Version="4.3.0-nightly-01180" />
+		<PackageReference Include="Humanizer.Core" Version="2.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0-rc.2.22472.3" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.1-dev-10301" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.1-dev-00896" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
+	</ItemGroup>
+
+</Project>
