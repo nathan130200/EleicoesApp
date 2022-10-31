@@ -7,7 +7,7 @@ namespace EleicoesBot;
 
 public interface IApuracoesService
 {
-    Task<(bool success, TseApiResult result)> UpdateAsync();
+    TseApiResult ObterResultados();
 }
 
 public class ApuracoesService : IApuracoesService
@@ -22,13 +22,10 @@ public class ApuracoesService : IApuracoesService
         m_logger = logger;
         m_client = new HttpClient();
         _ = Task.Run(WorkerTask);
-
     }
 
-    public Task<(bool success, TseApiResult result)> UpdateAsync()
-    {
-        return Task.FromResult((m_value != null, m_value));
-    }
+    public TseApiResult ObterResultados()
+        => m_value;
 
     async Task WorkerTask()
     {
@@ -63,19 +60,28 @@ public class TseApiResult
     public float PercentualSecoesComputadas => float.Parse(pst.Replace(',', '.'), CultureInfo.InvariantCulture);
 
     [JsonExtensionData]
-    protected Dictionary<string, JToken> extra { get; set; }
+    internal Dictionary<string, JToken> extra { get; set; }
+
+    public static implicit operator bool(TseApiResult self)
+        => self != null;
 }
 
 public class Candidato
 {
     [JsonProperty]
     protected string n { get; set; }
+
     [JsonProperty]
     protected string nm { get; set; }
+
     [JsonProperty]
     protected string vap { get; set; }
+
     [JsonProperty]
     protected string pvap { get; set; }
+
+    [JsonExtensionData]
+    internal Dictionary<string, JToken> extra { get; set; }
 
     [JsonIgnore]
     public int Numero => int.Parse(n);

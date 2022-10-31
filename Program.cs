@@ -30,7 +30,7 @@ internal class Program
 
         var cnext = bot.UseCommandsNext(new()
         {
-            StringPrefixes = new[] { ";" },
+            StringPrefixes = new[] { "e!" },
             Services = new ServiceCollection()
                 .AddLogging(x =>
                 {
@@ -40,6 +40,15 @@ internal class Program
                 .AddSingleton<IApuracoesService, ApuracoesService>()
                 .BuildServiceProvider(true)
         });
+
+        cnext.CommandErrored += (s, e) =>
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.Exception);
+            Console.ResetColor();
+
+            return Task.CompletedTask;
+        };
 
         cnext.RegisterCommands(typeof(Program).Assembly);
 
