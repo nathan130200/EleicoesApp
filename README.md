@@ -1,4 +1,4 @@
-# Apuracoes Bot
+### Sobre
 Bot para discord utilizado ontem para a visualização em tempo real das apurações das eleições do 1º e 2º turno.<br>Dados fornecidos para todos através do TSE pelo site: <a href="https://resultados.tse.jus.br/">https://resultados.tse.jus.br/</a>
 
 ### Como Executar
