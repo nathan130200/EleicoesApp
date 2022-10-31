@@ -1,4 +1,5 @@
-﻿using DSharpPlus.Entities;
+﻿using DSharpPlus.CommandsNext;
+using DSharpPlus.Entities;
 using Serilog;
 
 namespace EleicoesBot;
@@ -16,6 +17,9 @@ public static class Util
             Log.Error(ex.ToString());
         }
     }
+
+    public static Task<DiscordMessage> ReplyAsync(this CommandContext ctx, Action<DiscordMessageBuilder> fn)
+        => ctx.Channel.SendMessageAsync(fn);
 
     public static async Task ExpiresOn(this Task<DiscordMessage> task, double time, string reason = default)
     {

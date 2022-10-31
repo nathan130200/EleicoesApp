@@ -1,4 +1,5 @@
-﻿using DSharpPlus.CommandsNext;
+﻿using System.Text;
+using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 
@@ -10,6 +11,80 @@ public class InfoModule : BaseCommandModule
 
     public InfoModule(IApuracoesService service)
         => svc = service;
+
+    [Command, Description("Comando responsável por fornecer ajuda do bot.")]
+    public async Task Ajuda(CommandContext ctx,
+        [Description("Pesquisa relacionada com os comandos do bot.")]
+        string search = null)
+    {
+        var embed = new DiscordEmbedBuilder();
+
+        if (string.IsNullOrEmpty(search))
+        {
+            var sb = new StringBuilder()
+                .Append("```ts\n");
+
+            foreach (var (key, cmd) in ctx.CommandsNext.RegisteredCommands)
+            {
+                if (key == "help" || key == "ajuda") continue;
+
+                sb.AppendFormat("{0}{1}\n", ctx.Prefix, key);
+
+                var ovl = cmd.Overloads.OrderByDescending(x => x.Priority)
+                        .FirstOrDefault();
+
+                foreach (var arg in ovl.Arguments)
+                {
+                    sb.Append("  ");
+
+                    sb.Append(arg.IsOptional ? '[' : '<')
+                        .Append(TypeToName(arg.Type))
+                        .Append(' ')
+                        .Append(arg.Name);
+
+                    if (arg.IsCatchAll)
+                        sb.Append("...");
+
+                    sb.Append(arg.IsOptional ? ']' : '>')
+                        .AppendLine();
+                }
+
+                sb.AppendLine(cmd.Description)
+                    .AppendLine();
+            }
+
+            embed.WithDescription(sb.Append("\n```").ToString());
+        }
+
+        await ctx.ReplyAsync(x => x.Embed = embed);
+    }
+
+    static string TypeToName(Type t)
+    {
+        var name = t.Name.ToLowerInvariant();
+
+        if (name.Contains("int"))
+            return "number";
+        else if (name.Contains("boolean"))
+            return "condition";
+        else if (name.Contains("timespan"))
+            return "time";
+        else if (name.Contains("single") || name.Contains("double"))
+            return "float";
+        else
+            return name;
+    }
+
+    static string GetParentIndent(Command cmd, int start = 0)
+    {
+        int count = start;
+        var s = "";
+
+        for (; cmd != null; count++, cmd = cmd.Parent)
+            s += "\t";
+
+        return s;
+    }
 
     [Command, Description("Procura dados específicos de um deteminado candidato pelo seu número.")]
     public async Task Candidato(CommandContext ctx,
@@ -56,10 +131,10 @@ public class InfoModule : BaseCommandModule
                 _ => default
             });
 
-        await ctx.Channel.SendMessageAsync(x => x.Embed = embed);
+        await ctx.ReplyAsync(x => x.Embed = embed);
     }
 
-    [Command, Cooldown(1, 10d, CooldownBucketType.User), Description("Resumo dos candidados das eleições para presidente.")]
+    [Command, Cooldown(1, 5.0, CooldownBucketType.User), Description("Resumo dos candidados das eleições para presidente.")]
     public async Task Resultados(CommandContext ctx)
     {
         await ctx.TriggerTypingAsync();
